@@ -1,0 +1,26 @@
+name: tests
+
+on:
+  push:
+
+concurrency:
+    group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
+    cancel-in-progress: true
+
+jobs:
+  documentation:
+    name: Documentation
+    runs-on: ubuntu-20.04
+    permissions:
+      deployments: write
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        submodules: true
+    - name: Generate
+      run: |
+        make doc
+    - name: Upload artifact
+      uses: actions/upload-pages-artifact@v1
+      with:
+        path: 'build/html'
